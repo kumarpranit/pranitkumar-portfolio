@@ -221,3 +221,9 @@ h1,h2,h3{font-family:var(--display); font-weight:600; letter-spacing:-.02em; lin
     -webkit-mask-composite:source-in; mask-composite:intersect}
   .hero-roles{letter-spacing:.16em}
 }
+
+/* Writing: linked posts */
+.posts h3 a{color:var(--ink); text-decoration:none}
+.posts h3 a:hover{color:var(--green); text-decoration:underline; text-underline-offset:4px; text-decoration-thickness:2px}
+.posts .src{display:inline-block; margin-left:6px; padding:1px 8px; border:1px solid var(--line); border-radius:999px; font-size:13px; color:var(--green); white-space:nowrap}
+.posts-more{margin-top:24px; font-weight:600}
