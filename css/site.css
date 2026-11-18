@@ -233,3 +233,16 @@ h1,h2,h3{font-family:var(--display); font-weight:600; letter-spacing:-.02em; lin
 .hero-grid > div:first-child, .hero .ledger{position:relative; z-index:3}
 .hero-grid > figure{position:relative; z-index:1}
 @media (min-width:861px){ .hero-figure{z-index:1} }
+
+/* Featured work: two columns on wide screens so the card has no empty right half */
+@media (min-width:861px){
+  .feature{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); column-gap:56px; align-items:start; padding:40px 44px}
+  .feature h3, .feature p, .feature .read{grid-column:1}
+  .feature h3{max-width:none}
+  .feature .read{margin-top:24px; justify-self:start}
+  .feature-facts{grid-column:2; grid-row:1 / span 3; align-self:center; grid-template-columns:1fr; gap:0; margin-top:0; padding-top:0; border-top:0; border-left:1px solid var(--wash-line); padding-left:40px}
+  .feature-facts div{display:grid; grid-template-columns:150px minmax(0,1fr); align-items:baseline; gap:16px; padding:14px 0}
+  .feature-facts div + div{border-top:1px solid var(--wash-line)}
+  .feature-facts b{font-size:34px}
+  .feature-facts span{margin-top:0; font-size:15.5px}
+}
