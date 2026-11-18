@@ -237,3 +237,131 @@ var VISIT_NOTIFY_ENDPOINT = "/.netlify/functions/visit-notify";
   }
   document.addEventListener("visibilitychange", function () { if (!document.hidden) start(); });
 })();
+
+/* ------------------------------------------------------------------
+   Skills charts. EDIT THE NUMBERS HERE.
+   Radar values are self-rated proficiency from 1 to 5.
+   Bubble "size" is a rough guide to the scale of the outcome (1 to 4).
+   ------------------------------------------------------------------ */
+var RADAR_DATA = {
+  tools:   [["SQL", 5], ["Python", 4], ["Tableau", 4], ["Power BI", 4], ["PostgreSQL", 4], ["scikit-learn", 3], ["PyTorch", 3], ["Snowflake", 3]],
+  methods: [["Stakeholder management", 5], ["User stories", 5], ["Roadmapping", 4], ["Prioritization", 4], ["PRDs", 4], ["A/B testing", 4], ["OKRs", 4]],
+  domains: [["Program management", 5], ["Business architecture", 5], ["Data analytics", 5], ["AI product", 4], ["Machine learning", 3]]
+};
+var BUBBLE_DOMAINS = { ai: ["AI product", "#ffc37a"], program: ["Program", "#9cc3ff"], analytics: ["Analytics and growth", "#f4a3c0"], ml: ["ML projects", "#9fe3d0"] };
+var BUBBLE_DATA = [
+  { n: "NL-to-SQL system", d: "ai", size: 3.2, out: "88% accuracy with a three-LLM system at Fyxt.", link: "work/fyxt-ai-products.html" },
+  { n: "RAG vendor engine", d: "ai", size: 3.2, out: "Adopted by 63 property managers covering 17,000 properties.", link: "work/fyxt-ai-products.html" },
+  { n: "LLM monitoring", d: "ai", size: 2.6, out: "30% fewer incidents per week, about $163K saved a year.", link: "work/fyxt-ai-products.html" },
+  { n: "AI scorecard", d: "ai", size: 2.2, out: "Adopted by 70% of users within 3 months.", link: "work/fyxt-ai-products.html" },
+  { n: "Accenture programs", d: "program", size: 4, out: "$1.5M programs led with 17-person teams." },
+  { n: "Benchmarking platform", d: "program", size: 3, out: "$300K in first-year sales." },
+  { n: "Process improvement", d: "program", size: 2.5, out: "60% shorter cycle time across 6 workflows." },
+  { n: "Intelligent Driver System", d: "program", size: 2, out: "Top 10 of 25,000 global submissions in an innovation challenge." },
+  { n: "Product expansion", d: "analytics", size: 3.5, out: "18% customer growth and about 1.2M AUD in added revenue at TCS." },
+  { n: "KPI dashboards", d: "analytics", size: 2.6, out: "40% shorter approval cycles with executive reporting and Power BI." },
+  { n: "SAP automation", d: "analytics", size: 2, out: "68,000 AUD in new engagements." },
+  { n: "NFL Big Data Bowl", d: "ml", size: 2.2, out: "Deep learning on 650K+ player-tracking records.", link: "work/nfl-big-data-bowl.html" },
+  { n: "Content moderation", d: "ml", size: 2.2, out: "92% harmful-content and 96% spam detection, under 70ms.", link: "work/content-moderation.html" },
+  { n: "Semantic search", d: "ml", size: 1.9, out: "Vector search over 1K+ feedback records in under 100ms.", link: "work/semantic-search.html" },
+  { n: "Food Agent", d: "ml", size: 1.7, out: "Plain-language restaurant recommendations ranked by distance.", link: "work/food-agent.html" }
+];
+
+(function () {
+  var NS = "http://www.w3.org/2000/svg";
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  /* ----- Radar ----- */
+  var radar = document.getElementById("radar");
+  if (radar) {
+    var drawRadar = function (key) {
+      var data = RADAR_DATA[key], n = data.length, W = 460, H = 360, cx = W / 2, cy = H / 2 + 4, R = 120, i, lv;
+      radar.innerHTML = "";
+      var svg = el("svg", { viewBox: "0 0 " + W + " " + H }, radar);
+      var pt = function (idx, val) { var a = -Math.PI / 2 + idx / n * 6.2832; return [cx + Math.cos(a) * R * val / 5, cy + Math.sin(a) * R * val / 5]; };
+      for (lv = 1; lv <= 5; lv++) {
+        var ring = [];
+        for (i = 0; i < n; i++) ring.push(pt(i, lv).join(","));
+        el("polygon", { points: ring.join(" "), "class": "radar-ring" }, svg);
+      }
+      var shape = [];
+      for (i = 0; i < n; i++) {
+        var edge = pt(i, 5), lab = pt(i, 5.75), p = pt(i, data[i][1]);
+        el("line", { x1: cx, y1: cy, x2: edge[0], y2: edge[1], "class": "radar-axis" }, svg);
+        var anchor = Math.abs(lab[0] - cx) < 12 ? "middle" : lab[0] > cx ? "start" : "end";
+        var words = data[i][0].length > 12 ? data[i][0].split(" ") : [data[i][0]], t = el("text", { x: lab[0], y: lab[1] + 4 - (words.length > 1 && anchor !== "middle" ? 6 : 0), "text-anchor": anchor, "font-size": 13 }, svg);
+        if (words.length > 1 && anchor !== "middle") {
+          for (var w = 0; w < words.length; w++) { var ts = el("tspan", { x: lab[0], dy: w === 0 ? 0 : 15 }, t); ts.textContent = words[w]; }
+        } else t.textContent = data[i][0];
+        shape.push(p.join(","));
+      }
+      el("polygon", { points: shape.join(" "), "class": "radar-shape" }, svg);
+      for (i = 0; i < n; i++) { var q = pt(i, data[i][1]); el("circle", { cx: q[0], cy: q[1], r: 3.2, "class": "radar-dot" }, svg); }
+      radar.setAttribute("aria-label", "Radar chart, self-rated 1 to 5: " + data.map(function (d) { return d[0] + " " + d[1]; }).join(", "));
+    };
+    var tabs = document.querySelectorAll("[data-radar]");
+    for (var ti = 0; ti < tabs.length; ti++) {
+      tabs[ti].addEventListener("click", function () {
+        for (var j = 0; j < tabs.length; j++) tabs[j].setAttribute("aria-pressed", tabs[j] === this ? "true" : "false");
+        drawRadar(this.getAttribute("data-radar"));
+      });
+    }
+    drawRadar("tools");
+  }
+
+  /* ----- Bubbles ----- */
+  var stage = document.getElementById("bubbles"), detail = document.getElementById("bubble-detail");
+  if (stage) {
+    var W = 520, H = 330, centers = { ai: [135, 105], program: [385, 110], analytics: [395, 235], ml: [130, 240] };
+    var nodes = BUBBLE_DATA.map(function (b, i) {
+      var c = centers[b.d], a = i * 2.4;
+      return { b: b, r: 13 + b.size * 9.5, x: c[0] + Math.cos(a) * 30, y: c[1] + Math.sin(a) * 30, c: c };
+    });
+    for (var it = 0; it < 500; it++) {
+      for (var i = 0; i < nodes.length; i++) {
+        var A = nodes[i];
+        A.x += (A.c[0] - A.x) * .012; A.y += (A.c[1] - A.y) * .012;
+        for (var j = i + 1; j < nodes.length; j++) {
+          var B = nodes[j], dx = B.x - A.x, dy = B.y - A.y, d = Math.sqrt(dx * dx + dy * dy) || .01, min = A.r + B.r + 5;
+          if (d < min) { var push = (min - d) / 2, ux = dx / d, uy = dy / d; A.x -= ux * push; A.y -= uy * push; B.x += ux * push; B.y += uy * push; }
+        }
+        A.x = Math.max(A.r + 3, Math.min(W - A.r - 3, A.x)); A.y = Math.max(A.r + 3, Math.min(H - A.r - 3, A.y));
+      }
+    }
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "group", "aria-label": "Projects by domain" }, stage);
+    var current = null;
+    var show = function (node, circle) {
+      if (current) current.classList.remove("is-on");
+      current = circle; circle.classList.add("is-on");
+      detail.textContent = "";
+      var s = document.createElement("b"); s.textContent = node.b.n + ". "; detail.appendChild(s);
+      detail.appendChild(document.createTextNode(node.b.out + " "));
+      if (node.b.link) { var a = document.createElement("a"); a.href = node.b.link; a.textContent = "Read the case study"; detail.appendChild(a); }
+    };
+    nodes.forEach(function (node) {
+      var c = el("circle", { cx: node.x.toFixed(1), cy: node.y.toFixed(1), r: node.r.toFixed(1), fill: BUBBLE_DOMAINS[node.b.d][1], "class": "bubble", tabindex: 0, role: "button", "aria-label": node.b.n + ": " + node.b.out }, svg);
+      c.addEventListener("click", function () { show(node, c); });
+      c.addEventListener("mouseenter", function () { show(node, c); });
+      c.addEventListener("focus", function () { show(node, c); });
+      c.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); show(node, c); } });
+      if (node.r >= 37) {
+        var words = node.b.n.split(" "), lines = [], line = "";
+        words.forEach(function (w) { if ((line + " " + w).trim().length > 11 && line) { lines.push(line); line = w; } else line = (line + " " + w).trim(); });
+        lines.push(line);
+        var t = el("text", { x: node.x.toFixed(1), y: (node.y - (lines.length - 1) * 6.5 + 4).toFixed(1), "text-anchor": "middle", "class": "bubble-label" }, svg);
+        lines.forEach(function (ln, k) { var ts = el("tspan", { x: node.x.toFixed(1), dy: k === 0 ? 0 : 13 }, t); ts.textContent = ln; });
+      }
+    });
+    var legend = document.createElement("div"); legend.className = "viz-legend";
+    for (var key in BUBBLE_DOMAINS) {
+      var item = document.createElement("span"), dot = document.createElement("i");
+      dot.style.background = BUBBLE_DOMAINS[key][1]; item.appendChild(dot); item.appendChild(document.createTextNode(BUBBLE_DOMAINS[key][0])); legend.appendChild(item);
+    }
+    stage.appendChild(legend);
+  }
+})();
