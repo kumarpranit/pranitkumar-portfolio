@@ -47,7 +47,7 @@ var VISIT_NOTIFY_ENDPOINT = "/.netlify/functions/visit-notify";
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var ctx = canvas.getContext("2d");
   var W = 0, H = 0, dpr = 1, stars = [], region = null, visible = true, rafId = null, t0 = 0;
-  var COLORS = ["255,255,255", "255,255,255", "190,255,232", "47,230,167", "47,230,167", "255,214,150"];
+  var COLORS = ["255,255,255", "255,255,255", "255,255,255", "190,215,255", "255,214,150", "255,176,96"];
   var SHAPES = ["bars", "line"];
   var gears = [];
   var HOLD_SKY = 4200, MORPH = 1700, HOLD_SHAPE = 3600, CYCLE = HOLD_SKY + MORPH + HOLD_SHAPE + MORPH;
@@ -60,19 +60,18 @@ var VISIT_NOTIFY_ENDPOINT = "/.netlify/functions/visit-notify";
     var hr = hero.getBoundingClientRect();
     var fig = hero.querySelector(".hero-figure");
     if (fig && W > 860) {
-      /* Charts form in a wide band across the portrait's chest and the sky
-         on either side. The face stays clear. */
-      var r = fig.getBoundingClientRect(), fx = r.left - hr.left, fy = r.top - hr.top;
-      var x0 = Math.max(W * .5, fx - 70), x1 = Math.min(W - 28, fx + r.width - 40);
-      var y1 = fy + r.height * .80, y0 = fy + r.height * .50;
-      var face = { cx: fx + r.width * .53, cy: fy + r.height * .28, rx: r.width * .2, ry: r.height * .215 };
-      /* Gears sit beside the head, never over it: right side if there is room, otherwise left. */
-      var R1 = Math.max(38, Math.min(56, r.width * .11)), R2 = R1 * 8 / 12, tip = R1 * .13 + 4;
-      var gy = face.cy - face.ry * .45, gxR = face.cx + face.rx + R1 + tip + 10;
-      if (gxR + (R1 + R2) * Math.cos(.87) + R2 + tip <= W - 16) setGears(gxR, gy, R1, .87);
-      else if (gxR + R1 + tip <= W - 12) setGears(gxR, gy, R1, 2.0);
-      else setGears(face.cx - face.rx - R1 - tip - 10, gy, R1, 2.35);
-      return { x: x0, y: y0, w: x1 - x0, h: y1 - y0, face: face };
+      /* The portrait sits in a small frame. Charts form in the space under
+         the frame, and the gears turn beside its top corner. */
+      var img = fig.querySelector("img") || fig, r = img.getBoundingClientRect();
+      var fx = r.left - hr.left, fy = r.top - hr.top;
+      var led = hero.querySelector(".ledger"), ledTop = led ? led.getBoundingClientRect().top - hr.top : H;
+      var x1 = Math.min(W - 24, fx + r.width + 10), x0 = Math.max(W * .5, x1 - Math.max(r.width + 70, 300));
+      var y0 = fy + r.height + 30, y1 = Math.max(y0 + 60, Math.min(y0 + 170, ledTop - 34));
+      var R1 = 40, R2 = R1 * 8 / 12, tip = R1 * .13 + 4, gy = fy + 58;
+      var gxR = fx + r.width + R1 + tip + 16;
+      if (gxR + (R1 + R2) * Math.cos(.87) + R2 + tip <= W - 14) setGears(gxR, gy, R1, .87);
+      else setGears(fx - R1 - tip - 16, gy, R1, 2.35);
+      return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
     }
     setGears(W - 60, 46, 23, 2.45);
     return { x: W * .48, y: 104, w: W * .46, h: 100 };
@@ -109,21 +108,21 @@ var VISIT_NOTIFY_ENDPOINT = "/.netlify/functions/visit-notify";
         if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
       }
       ctx.closePath();
-      ctx.fillStyle = "rgba(47,230,167,.07)"; ctx.fill();
-      ctx.strokeStyle = "rgba(47,230,167,.38)"; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = "rgba(190,215,255,.08)"; ctx.fill();
+      ctx.strokeStyle = "rgba(210,228,255,.5)"; ctx.lineWidth = 1; ctx.stroke();
       /* star dots along the outline */
       for (i = 0; i < steps; i += 2) {
         a = i / steps * 6.2832; rr = gearRadius(g, a, depth);
         var tw = .6 + .4 * Math.sin(sec * 1.7 + i * 1.9 + gi);
-        ctx.fillStyle = (i % 10 === 0 ? "rgba(255,255,255," : "rgba(140,255,215,") + tw.toFixed(3) + ")";
+        ctx.fillStyle = (i % 10 === 0 ? "rgba(255,255,255," : "rgba(255,214,150,") + tw.toFixed(3) + ")";
         ctx.beginPath(); ctx.arc(g.cx + Math.cos(a + rot) * rr, g.cy + Math.sin(a + rot) * rr, i % 10 === 0 ? 1.5 : 1, 0, 6.2832); ctx.fill();
       }
       /* hub and spokes */
-      ctx.strokeStyle = "rgba(47,230,167,.45)"; ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(210,228,255,.55)"; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.arc(g.cx, g.cy, g.R * .32, 0, 6.2832); ctx.stroke();
-      ctx.beginPath(); ctx.arc(g.cx, g.cy, g.R * .62, 0, 6.2832); ctx.strokeStyle = "rgba(47,230,167,.2)"; ctx.stroke();
+      ctx.beginPath(); ctx.arc(g.cx, g.cy, g.R * .62, 0, 6.2832); ctx.strokeStyle = "rgba(210,228,255,.26)"; ctx.stroke();
       var spokes = gi === 0 ? 6 : 4;
-      ctx.strokeStyle = "rgba(47,230,167,.3)";
+      ctx.strokeStyle = "rgba(210,228,255,.36)";
       for (i = 0; i < spokes; i++) {
         a = rot + i / spokes * 6.2832;
         ctx.beginPath();
@@ -168,7 +167,7 @@ var VISIT_NOTIFY_ENDPOINT = "/.netlify/functions/visit-notify";
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     region = shapeRegion();
     var n = Math.max(320, Math.min(1300, Math.floor(W * H / 1100)));
-    var skyH = H - 70, ccx = region.x + region.w * .5, ccy = region.y + region.h * .1;
+    var skyH = H - 8, ccx = region.x + region.w * .5, ccy = region.y + region.h * .1;
     stars = [];
     for (var i = 0; i < n; i++) {
       var inCluster = i < n * .62, s = {};

@@ -246,3 +246,142 @@ h1,h2,h3{font-family:var(--display); font-weight:600; letter-spacing:-.02em; lin
   .feature-facts b{font-size:34px}
   .feature-facts span{margin-top:0; font-size:15.5px}
 }
+
+/* ------------------------------------------------------------------
+   Site-wide sky: one fixed dusk gradient with stars and a planet
+   horizon behind every section and page. Content scrolls over it.
+   ------------------------------------------------------------------ */
+:root{
+  --paper:#021a1b;
+  --wash:rgba(1,22,23,.52);
+  --wash-hover:rgba(1,22,23,.7);
+  --wash-line:rgba(190,255,232,.2);
+  --soft:#c4dad2;
+  --line:rgba(190,255,232,.2);
+  --head-bg:rgba(2,26,27,.72);
+  --contact-bg:rgba(1,20,21,.62);
+  --contact-soft:#c4dad2;
+  --green:#52f0bd;
+  --green-deep:#9af7d8;
+  --btn-bg:#3be9b0;
+}
+html{background:#06383a}
+body{background:transparent; position:relative; min-height:100vh}
+body::before{content:""; position:fixed; inset:0; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(1.2px 1.2px at 12% 18%, rgba(255,255,255,.9) 50%, transparent 51%),
+    radial-gradient(1px 1px at 27% 42%, rgba(190,255,232,.8) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 41% 9%, rgba(255,255,255,.85) 50%, transparent 51%),
+    radial-gradient(1px 1px at 58% 31%, rgba(255,255,255,.7) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 69% 14%, rgba(255,214,150,.85) 50%, transparent 51%),
+    radial-gradient(1px 1px at 83% 37%, rgba(255,255,255,.8) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 92% 8%, rgba(190,255,232,.9) 50%, transparent 51%),
+    radial-gradient(1px 1px at 6% 55%, rgba(255,255,255,.6) 50%, transparent 51%),
+    radial-gradient(1px 1px at 36% 63%, rgba(255,255,255,.55) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 51% 52%, rgba(255,214,150,.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 76% 58%, rgba(255,255,255,.6) 50%, transparent 51%),
+    radial-gradient(1px 1px at 19% 74%, rgba(255,255,255,.45) 50%, transparent 51%),
+    radial-gradient(1px 1px at 64% 77%, rgba(255,255,255,.45) 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 70%, rgba(190,255,232,.5) 50%, transparent 51%),
+    radial-gradient(ellipse 90% 26% at 50% 100%, rgba(150,255,220,.34) 0%, rgba(90,230,190,.14) 45%, rgba(47,230,167,0) 75%),
+    linear-gradient(180deg, #021a1b 0%, #042b2b 24%, #084844 50%, #0d655b 72%, #14806f 90%, #1f9a84 100%)}
+body::after{content:""; position:fixed; left:50%; bottom:-1150px; width:3400px; height:1200px; transform:translateX(-50%);
+  z-index:-1; pointer-events:none; border-radius:50%; background:#011416; border-top:1.5px solid rgba(200,255,235,.9);
+  box-shadow:0 -6px 30px rgba(120,255,215,.55), 0 -34px 100px rgba(47,230,167,.22)}
+
+/* The hero no longer paints its own sky; it shows the shared one */
+.hero{background:none; padding-bottom:72px}
+.aurora{display:none}
+@media (max-width:860px){ .hero{padding-bottom:56px} }
+
+/* Panels sit on the sky as dark glass so text stays readable */
+.feature, .next a{backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid var(--wash-line)}
+.contact{backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-top:1px solid var(--wash-line)}
+.site-foot{color:#d5e6e0; position:relative}
+.ledger{border-top-color:rgba(255,255,255,.85)}
+.role-when, .posts time{color:#d0e2dc}
+
+/* ------------------------------------------------------------------
+   Palette: night-to-sunset sky (navy, blue, violet, orange) replacing
+   the dark teal theme. Accents are warm amber; buttons are white.
+   ------------------------------------------------------------------ */
+:root{
+  --paper:#0a1326;
+  --ink:#f6f8fc;
+  --soft:#d3ddef;
+  --line:rgba(214,228,255,.24);
+  --wash:rgba(8,16,38,.5);
+  --wash-hover:rgba(8,16,38,.68);
+  --wash-line:rgba(214,228,255,.24);
+  --green:#ffc37a;
+  --green-deep:#ffe2b8;
+  --head-bg:rgba(9,18,40,.72);
+  --btn-bg:#ffffff;
+  --btn-bg-hover:#ffe2b8;
+  --btn-ink:#0b1730;
+  --cta-bg:#ffffff;
+  --cta-ink:#0b1730;
+  --contact-bg:rgba(8,16,38,.6);
+  --contact-ink:#ffffff;
+  --contact-soft:#d3ddef;
+  --contact-hover:#ffc37a;
+}
+html{background:#1c3d6e}
+body{text-shadow:0 1px 2px rgba(6,12,32,.35)}
+.btn, .site-nav a.cta{text-shadow:none}
+body::before{
+  background:
+    radial-gradient(1.2px 1.2px at 12% 18%, rgba(255,255,255,.95) 50%, transparent 51%),
+    radial-gradient(1px 1px at 27% 42%, rgba(255,255,255,.8) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 41% 9%, rgba(255,255,255,.9) 50%, transparent 51%),
+    radial-gradient(1px 1px at 58% 31%, rgba(255,255,255,.75) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 69% 14%, rgba(255,205,140,.9) 50%, transparent 51%),
+    radial-gradient(1px 1px at 83% 37%, rgba(255,255,255,.8) 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 92% 8%, rgba(255,255,255,.9) 50%, transparent 51%),
+    radial-gradient(1px 1px at 6% 55%, rgba(255,255,255,.6) 50%, transparent 51%),
+    radial-gradient(1px 1px at 36% 63%, rgba(255,255,255,.55) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 51% 52%, rgba(255,205,140,.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 76% 58%, rgba(255,255,255,.6) 50%, transparent 51%),
+    radial-gradient(ellipse 95% 20% at 50% 100%, rgba(255,170,90,.55) 0%, rgba(255,150,80,.2) 50%, rgba(255,150,80,0) 78%),
+    linear-gradient(180deg, #0b1730 0%, #12284c 16%, #1f447c 36%, #3465a8 56%, #5683c4 72%, #7f86c6 84%, #c98a86 93%, #f29a52 100%)}
+body::after{background:#0a1124; border-top:1.5px solid rgba(255,226,190,.95);
+  box-shadow:0 -5px 26px rgba(255,170,90,.6), 0 -30px 90px rgba(255,150,80,.25)}
+.hero h1{background:linear-gradient(95deg, #ffffff 0%, #ffffff 34%, #ffe2b8 68%, #ffb468 100%); -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; text-shadow:none}
+.site-foot{color:#f1f4fa}
+.role-when, .posts time{color:#dbe4f3}
+.ledger{border-top-color:rgba(255,255,255,.9)}
+
+/* Cut-out portrait: the sky shows behind it, so only the bottom needs to fade */
+@media (min-width:861px){
+  .hero-photo{
+    -webkit-mask-image:linear-gradient(to bottom, #000 0%, #000 66%, transparent 97%);
+    mask-image:linear-gradient(to bottom, #000 0%, #000 66%, transparent 97%);
+    -webkit-mask-composite:source-over; mask-composite:add;
+    filter:drop-shadow(0 0 28px rgba(10,20,48,.35))}
+}
+
+/* Small framed portrait (desktop). Replaces the large blended portrait. */
+@media (min-width:861px){
+  .hero-grid{grid-template-columns:minmax(0,1fr) 300px; gap:56px; align-items:start}
+  .hero-grid > figure, .hero-figure{margin:6px 0 0; z-index:3; justify-self:end}
+  .hero-photo{width:236px; height:auto; aspect-ratio:4/5; object-fit:cover; object-position:50% 18%;
+    -webkit-mask-image:none; mask-image:none; filter:none;
+    border-radius:18px; border:1px solid rgba(255,255,255,.5);
+    box-shadow:0 20px 50px rgba(6,12,32,.45), 0 0 0 6px rgba(255,255,255,.07)}
+}
+
+/* Portrait: small circle on every screen size */
+@media (min-width:861px){
+  .hero-grid{grid-template-columns:minmax(0,1fr) 260px}
+  .hero-photo{width:176px; height:176px; aspect-ratio:auto; object-position:50% 50%; border-radius:50%;
+    border:2px solid rgba(255,255,255,.6); box-shadow:0 16px 40px rgba(6,12,32,.45), 0 0 0 7px rgba(255,255,255,.08)}
+}
+@media (max-width:860px){
+  .hero-photo{border:2px solid rgba(255,255,255,.6); box-shadow:0 0 0 6px rgba(255,255,255,.08)}
+}
+
+/* Horizon: no dark band below it. The planet surface glows orange and only a thin slice shows. */
+body::after{bottom:-1164px; background:linear-gradient(180deg, #ffd6a6 0%, #ffb877 1.2%, #f59a55 4%, #e98548 100%);
+  border-top:1.5px solid rgba(255,244,226,.95);
+  box-shadow:0 -4px 22px rgba(255,190,120,.6), 0 -26px 80px rgba(255,160,90,.28)}
+:root{ --contact-bg:rgba(10,20,46,.38) }
